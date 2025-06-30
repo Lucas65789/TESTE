@@ -49,8 +49,10 @@ async def handle_token(update: Update, context: ContextTypes.DEFAULT_TYPE):
         iniciar_bot(uid, token)
         registry[uid] = {"token": token, "user_id": update.effective_user.id}
         save_registry(registry)
-        await update.message.reply_text(f"✅ Bot iniciado!
-ID: {uid}", reply_markup=gerar_botoes(uid))
+        await update.message.reply_text(
+            f"✅ Bot iniciado!\nID: {uid}",
+            reply_markup=gerar_botoes(uid)
+        )
     except Exception as e:
         await update.message.reply_text(f"Erro ao iniciar bot: {e}")
 
@@ -75,7 +77,10 @@ async def botao_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif action == "reiniciar":
         parar_bot(uid)
         iniciar_bot(uid, registry[uid]["token"])
-        await query.edit_message_text("♻️ Bot reiniciado.", reply_markup=gerar_botoes(uid))
+        await query.edit_message_text(
+            "♻️ Bot reiniciado.",
+            reply_markup=gerar_botoes(uid)
+        )
 
 async def listar_bots_usuario(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
@@ -86,7 +91,8 @@ async def listar_bots_usuario(update: Update, context: ContextTypes.DEFAULT_TYPE
         return
 
     for uid in bots_do_usuario:
-        texto = f"🤖 Bot ID: `{uid}`\nStatus: {'🟢 Ativo' if uid in processos else '🔴 Parado'}"
+        status = "🟢 Ativo" if uid in processos else "🔴 Parado"
+        texto = f"🤖 Bot ID: `{uid}`\nStatus: {status}"
         await update.message.reply_text(texto, parse_mode='Markdown', reply_markup=gerar_botoes(uid))
 
 def restaurar_bots():
@@ -111,4 +117,3 @@ async def main():
 if __name__ == "__main__":
     import asyncio
     asyncio.run(main())
-
